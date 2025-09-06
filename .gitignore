@@ -1,6 +1,6 @@
 venv
 .env
-pdf_rechnungen
+pdf_invoices/
 .DS_Store
 __pycache__/
 *.pyc

@@ -68,4 +68,4 @@ COPY .env .
 ENV DISPLAY=:99
 
 # Run main.py
-CMD ["python", "main.py"]
+CMD ["python", "-u", "main.py"]
