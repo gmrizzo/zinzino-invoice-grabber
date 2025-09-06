@@ -7,6 +7,8 @@ from selenium.webdriver.common.by import By
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
+from selenium.webdriver.chrome.options import Options
 import requests
 
 load_dotenv()
@@ -23,41 +25,11 @@ DOWNLOAD_DIR = "pdf_rechnungen"
 if not os.path.exists(DOWNLOAD_DIR):
     os.makedirs(DOWNLOAD_DIR)
 
-from selenium.webdriver.chrome.options import Options
-
-def date_in_last_month(date_str):
-    d = datetime.strptime(date_str, "%d.%m.%Y")
-    if month:
-        try:
-            m = datetime.strptime(month, "%m.%Y")
-            lm_start = m.replace(day=1)
-            next_month = m.replace(day=28) + timedelta(days=4) # go to next month
-            lm_end = next_month - timedelta(days=next_month.day)
-            return lm_start <= d <= lm_end
-        except ValueError:
-            print(f"Ungültiges Datumsformat für Monat: {month}. Bitte MM.YYYY verwenden.")
-            return False
-    else:
-        t = datetime.today()
-        lm_end = t.replace(day=1) - timedelta(days=1)
-        lm_start = lm_end.replace(day=1)
-        return lm_start <= d <= lm_end
-
-def checkForCookies(driver):
-    try:
-        accept_btn = driver.find_element(By.CSS_SELECTOR, "button[id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']")
-        accept_btn.click()
-        print("Cookies accepted.")
-    except Exception as e:
-        print("No cookie prompt found or could not interact.")
 
 chrome_options = Options()
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
-
-
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
 
 driver = webdriver.Chrome(options=chrome_options)
 try:
@@ -151,3 +123,31 @@ try:
             print(f"Could not log out for user {acc['username']}: {e}")
 finally:
     driver.quit()
+
+
+
+def date_in_last_month(date_str):
+    d = datetime.strptime(date_str, "%d.%m.%Y")
+    if month:
+        try:
+            m = datetime.strptime(month, "%m.%Y")
+            lm_start = m.replace(day=1)
+            next_month = m.replace(day=28) + timedelta(days=4) # go to next month
+            lm_end = next_month - timedelta(days=next_month.day)
+            return lm_start <= d <= lm_end
+        except ValueError:
+            print(f"Ungültiges Datumsformat für Monat: {month}. Bitte MM.YYYY verwenden.")
+            return False
+    else:
+        t = datetime.today()
+        lm_end = t.replace(day=1) - timedelta(days=1)
+        lm_start = lm_end.replace(day=1)
+        return lm_start <= d <= lm_end
+
+def checkForCookies(driver):
+    try:
+        accept_btn = driver.find_element(By.CSS_SELECTOR, "button[id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']")
+        accept_btn.click()
+        print("Cookies accepted.")
+    except Exception as e:
+        print("No cookie prompt found or could not interact.")
