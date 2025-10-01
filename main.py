@@ -12,7 +12,6 @@ from selenium.webdriver.chrome.options import Options
 import requests
 
 
-
 def date_in_last_month(date_str):
     d = datetime.strptime(date_str, "%d.%m.%Y")
     if month:
@@ -43,7 +42,7 @@ def checkForCookies(driver):
 load_dotenv()
 chrome_options = Options()
 chrome_options.add_argument('--window-size=1420,1080')
-chrome_options.add_argument("--headless")
+# chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument('--disable-gpu')
@@ -61,17 +60,18 @@ if not os.path.exists(DOWNLOAD_DIR):
     os.makedirs(DOWNLOAD_DIR)
 
 driver = webdriver.Chrome(options=chrome_options)
+driver.set_window_size(1920, 1080)
 try:
     for acc in accounts:
         try:
             print(f"Logging in for user {acc['username']}")
             driver.get(LOGIN_URL)
             try:
-                WebDriverWait(driver, 15).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, "input[placeholder='CustomerID/User']"))
-                )
-                user_input = driver.find_element(By.CSS_SELECTOR, "input[placeholder='CustomerID/User']")
-                pw_input = driver.find_element(By.CSS_SELECTOR, "input[placeholder='Passwort']")
+                # WebDriverWait(driver, 15).until(
+                #     EC.presence_of_element_located((By.CSS_SELECTOR, "input[placeholder='CustomerID/User']"))
+                # )
+                user_input = driver.find_element(By.ID, "LoginName")
+                pw_input = driver.find_element(By.ID, "Password")
                 user_input.clear()
                 user_input.send_keys(acc["username"])
                 pw_input.clear()
@@ -80,7 +80,7 @@ try:
             except Exception as e:
                 print("Login fields not found or could not interact.")
                 print(f"Exception: {e}")
-                time.sleep(20)
+                time.sleep(5)
                 continue
             checkForCookies(driver)
 
