@@ -48,7 +48,7 @@ chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument('--disable-gpu')
 accounts = []
 month = os.getenv('MONTH')
-for i in range(1, 13):
+for i in range(1, 100):
     user = os.getenv(f'USERNAME_{i}')
     pw = os.getenv(f'PASSWORD_{i}')
     if user and pw:
@@ -64,7 +64,7 @@ driver.set_window_size(1920, 1080)
 try:
     for acc in accounts:
         try:
-            print(f"Logging in for user {acc['username']}")
+            print(f"Logging in for user {acc['username']} account number {accounts.index(acc)+1}/{len(accounts)}")
             driver.get(LOGIN_URL)
             try:
                 # WebDriverWait(driver, 15).until(
